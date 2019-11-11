@@ -1,0 +1,44 @@
+FROM ubuntu:18.04
+
+RUN apt-get update && \
+    apt-get -y install \
+	php php-gd php-mysql php-dom php-cli \
+	php-ds php-mbstring php-curl php-bcmath \
+	php-xml php-zip \
+	wget mariadb-server mariadb-client zip unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/76a7060ccb93902cd7576b67264ad91c8a2700e2/web/installer -O - -q | php -- --quiet
+RUN mv composer.phar /usr/local/bin/composer
+RUN composer global require hirak/prestissimo --no-plugins --no-scripts
+CHECKPOINT
+
+WORKDIR /goodwork
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction \
+    --no-autoloader --no-suggest --no-scripts --no-dev
+CHECKPOINT
+
+COPY .env.travis .env
+COPY . ./
+RUN composer install --no-interaction --no-suggest
+RUN php artisan key:generate
+
+CHECKPOINT
+
+RUN mysql -e 'CREATE DATABASE goodwork;'
+RUN mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('');"
+RUN mysql -e "CREATE USER 'root'@'127.0.0.1' IDENTIFIED BY '';"
+RUN mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1';"
+COPY artisan bootstrap ./
+RUN php artisan migrate
+RUN php artisan passport:install
+RUN php artisan passport:keys
+RUN php artisan serve&
+RUN sleep 5
+RUN php artisan config:clear
+
+RUN vendor/bin/phpunit --coverage-clover=clover.xml
+# codecov not supported yet
+# RUN curl -s https://codecov.io/bash | bash
+

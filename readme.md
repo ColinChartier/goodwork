@@ -1,5 +1,6 @@
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/iluminar/goodwork/blob/dev/LICENSE)
 [![Build Status](https://travis-ci.org/iluminar/goodwork.svg?branch=dev)](https://travis-ci.org/iluminar/goodwork)
+[![Acceptance tests](https://layerci.com/github/iluminar/goodwork/badge)](https://layerci.com/github/iluminar/goodwork)
 [![Stable Version](https://poser.pugx.org/iluminar/goodwork/v/stable)](https://github.com/iluminar/goodwork)
 [![Laravel Version](https://img.shields.io/badge/Laravel-6.0-brightgreen.svg?style=flat)](https://github.com/laravel/laravel)
 [![VueJS Version](https://img.shields.io/badge/vue-2.5.13-brightgreen.svg?style=flat)](https://github.com/vuejs/vue)
